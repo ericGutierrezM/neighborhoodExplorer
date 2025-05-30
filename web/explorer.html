@@ -58,16 +58,24 @@
 
   <label id='text-select-topic' for="topic-select">Select a topic</label>
   <select id="topic-select">
-    <option value="topic1">Population Density</option>
+    <option value="topic1">Population (total)</option>
     <option value="topic2">Elderly Population</option>
     <option value="topic3">Unemployment</option>
   </select>
 
   <div id="map">
       <script>
-        const map = L.map('map').setView([41.470, 2.075], 12.5);
+        const map = L.map('map').setView([41.470, 2.075], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+        
 
+        fetch('../data/shapes.geojson')
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+        }).addTo(map);
+      })
+      .catch(err => console.error('Error loading GeoJSON:', err));
       </script>
   </div>
 
