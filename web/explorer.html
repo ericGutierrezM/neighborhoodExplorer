@@ -65,50 +65,114 @@
 
   <div id="map">
       <script>
+  
+        
         const map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.7);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
         
-      
 
-        fetch('../data/shapes.geojson')
-      .then(response => response.json())
-      .then(data => {
-        L.geoJSON(data, {
-          style: function(feature){
-            return {
-              color: colorFunction(feature),
-              stroke: 0,
-              fillOpacity: 0.55
-            };
-          },
-        }).addTo(map);
-      })
-      .catch(err => console.error('Error loading GeoJSON:', err));
+        var fetchDDBB = function() {
+          var buildClasses = function(rows,columnNumber){
+            var valueList = []
+            for(let i=1;i<rows.length-1;i++){
+              valueList.push(parseInt(rows[i][columnNumber]))
+            }
+            let minV = Math.min(...valueList)
+            let maxV = Math.max(...valueList)
+            let classRange = (maxV - minV)/5
+            var classList = []
+            for(let j=0;j<valueList.length;j++){
+              if(valueList[j]<(minV+classRange)){
+                classList.push(['0'+rows[j+1][0],1]);
+              } else if(valueList[j]>=(minV+classRange) && valueList[j]<(minV+2*classRange)){
+                classList.push(['0'+rows[j+1][0],2]);
+              } else if(valueList[j]>=(minV+2*classRange) && valueList[j]<(minV+3*classRange)){
+                classList.push(['0'+rows[j+1][0],3]);
+              } else if(valueList[j]>=(minV+3*classRange) && valueList[j]<(minV+4*classRange)){
+                classList.push(['0'+rows[j+1][0],4]);
+              } else {
+                classList.push(['0'+rows[j+1][0],5]);
+              }
+            }
+            return classList;       
+          }
 
-      var colorFunction = function(feature){
-        if(feature.properties.SECCIO=="003"){
-          return 'blue'
-        } else {
-          return 'yellow'
+          return fetch('../data/ddbb.csv')
+            .then(response => response.text())
+            .then(csvText => {
+              var rows = csvText.split('\n').map(row => row.split(','));
+              var cList = buildClasses(rows,1);
+              return cList;
+            }); 
+
         }
-      }
+        
+        var fetchGEOJSON = function(classList,map){
+          console.log(classList)
+          fetch('../data/shapes.geojson')
+            .then(response => response.json())
+            .then(data => {
+              L.geoJSON(data, {
+                style: function(feature){
+                  return {
+                    color: colorFunction(feature,classList),
+                    stroke: 0,
+                    fillOpacity: 0.9
+                  };
+                },
+              }).addTo(map);
+            })
+            .catch(err => console.error('Error loading GeoJSON:', err));
+        }
+        
+        var colorFunction = function(feature, classList){
+          for(let k=0;k<classList.length;k++){
+            if(feature.properties.MUNDISSEC==classList[k][0]){
+              switch (classList[k][1]){
+                case 1:
+                  return '#8fb3df';
+                  break;
+                case 2:
+                  return '#6086b6';
+                  break;
+                case 3:
+                  return '#3f6490';
+                  break;
+                case 4:
+                  return '#214167';
+                  break;
+                case 5:
+                  return '#0e2542';
+              }
+            }
+          }
+          
+        }
+        
+        var buildStroke = function(map){
+          fetch('../data/shapes.geojson')
+            .then(response => response.json())
+            .then(data => {
+              L.geoJSON(data, {
+                style: function(feature){
+                  return {
+                    color: 'black',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0
+                  };
+                },
+              }).addTo(map);
+            })
+            .catch(err => console.error('Error loading GeoJSON:', err));
+        }
 
-    fetch('../data/shapes.geojson')
-      .then(response => response.json())
-      .then(data => {
-        L.geoJSON(data, {
-          style: function(feature){
-            return {
-              color: 'black',
-              weight: 1,
-              opacity: 0.6,
-              fillOpacity: 0
-            };
-          },
-        }).addTo(map);
-      })
-      .catch(err => console.error('Error loading GeoJSON:', err));
-
+        fetchDDBB().then(classList => {
+          fetchGEOJSON(classList, map);
+          buildStroke(map);
+        });
+        
+        
 
       </script>
   </div>
