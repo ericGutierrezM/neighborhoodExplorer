@@ -72,9 +72,12 @@
         var fetchDDBB = function() {
           var buildClasses = function(rows,columnNumber){
             var valueList = []
+            var nameList = []
             for(let i=1;i<rows.length-1;i++){
               valueList.push(parseInt(rows[i][columnNumber]))
+              nameList.push(rows[i][1])
             }
+
             let minV = Math.min(...valueList)
             let maxV = Math.max(...valueList)
             let classRange = (maxV - minV)/5
@@ -92,14 +95,14 @@
                 classList.push(['0'+rows[j+1][0],5]);
               }
             }
-            return [valueList, classList];       
+            return [valueList, nameList, classList];       
           }
 
           return fetch('../data/ddbb.csv')
             .then(response => response.text())
             .then(csvText => {
               var rows = csvText.split('\n').map(row => row.split(','));
-              var cList = buildClasses(rows,1);
+              var cList = buildClasses(rows,2);
               return cList;
             }); 
 
@@ -112,7 +115,7 @@
               L.geoJSON(data, {
                 style: function(feature){
                   return {
-                    fillColor: colorFunction(feature,classList[1]),
+                    fillColor: colorFunction(feature,classList[2]),
                     color: 'black',
                     stroke: true,
                     weight: 1,
@@ -122,15 +125,15 @@
                 onEachFeature: function(feature, layer) {
                   const contentCode = feature.properties.MUNDISSEC;
                   
-                  let contentValue = "a";
+                  let contentValue;
                   for(let k=0;k<classList[0].length;k++){
-                    if(contentCode==classList[1][k][0]){
-                      contentValue = classList[0][k];
+                    if(contentCode==classList[2][k][0]){
+                      contentValue = classList[1][k]+": "+classList[0][k];
                       break;
                     }
                   }
                   layer.on('click', function(e) {
-                  layer.bindPopup(contentCode+": "+contentValue).openPopup();
+                  layer.bindPopup(contentValue).openPopup();
                   });
                 }
               }).addTo(map);
