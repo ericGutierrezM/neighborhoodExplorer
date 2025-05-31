@@ -108,18 +108,28 @@
         }
         
         var fetchGEOJSON = function(classList,map){
-          console.log(classList)
           fetch('../data/shapes.geojson')
             .then(response => response.json())
             .then(data => {
               L.geoJSON(data, {
                 style: function(feature){
                   return {
-                    color: colorFunction(feature,classList),
-                    stroke: 0,
+                    fillColor: colorFunction(feature,classList),
+                    color: 'black',
+                    stroke: true,
+                    weight: 1,
                     fillOpacity: 0.9
                   };
                 },
+                onEachFeature: function(feature, layer,classList) {
+                  const content = feature.properties.MUNDISSEC;
+                  layer.on('mouseover', function(e) {
+                  layer.bindPopup(content).openPopup();
+                  });
+                  layer.on('mouseout', function(d){
+                    layer.closePopup();
+                  })
+                }
               }).addTo(map);
             })
             .catch(err => console.error('Error loading GeoJSON:', err));
@@ -169,7 +179,7 @@
 
         fetchDDBB().then(classList => {
           fetchGEOJSON(classList, map);
-          buildStroke(map);
+          //buildStroke(map);
         });
         
         
