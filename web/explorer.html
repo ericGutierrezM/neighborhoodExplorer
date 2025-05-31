@@ -65,12 +65,10 @@
 
   <div id="map">
       <script>
-  
-        
-        const map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.7);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
-        
 
+        const map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.7);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
+        
         var fetchDDBB = function() {
           var buildClasses = function(rows,columnNumber){
             var valueList = []
@@ -94,7 +92,7 @@
                 classList.push(['0'+rows[j+1][0],5]);
               }
             }
-            return classList;       
+            return [valueList, classList];       
           }
 
           return fetch('../data/ddbb.csv')
@@ -114,21 +112,26 @@
               L.geoJSON(data, {
                 style: function(feature){
                   return {
-                    fillColor: colorFunction(feature,classList),
+                    fillColor: colorFunction(feature,classList[1]),
                     color: 'black',
                     stroke: true,
                     weight: 1,
-                    fillOpacity: 0.9
+                    fillOpacity: 0.7
                   };
                 },
-                onEachFeature: function(feature, layer,classList) {
-                  const content = feature.properties.MUNDISSEC;
-                  layer.on('mouseover', function(e) {
-                  layer.bindPopup(content).openPopup();
+                onEachFeature: function(feature, layer) {
+                  const contentCode = feature.properties.MUNDISSEC;
+                  
+                  let contentValue = "a";
+                  for(let k=0;k<classList[0].length;k++){
+                    if(contentCode==classList[1][k][0]){
+                      contentValue = classList[0][k];
+                      break;
+                    }
+                  }
+                  layer.on('click', function(e) {
+                  layer.bindPopup(contentCode+": "+contentValue).openPopup();
                   });
-                  layer.on('mouseout', function(d){
-                    layer.closePopup();
-                  })
                 }
               }).addTo(map);
             })
@@ -158,32 +161,11 @@
           }
           
         }
-        
-        var buildStroke = function(map){
-          fetch('../data/shapes.geojson')
-            .then(response => response.json())
-            .then(data => {
-              L.geoJSON(data, {
-                style: function(feature){
-                  return {
-                    color: 'black',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0
-                  };
-                },
-              }).addTo(map);
-            })
-            .catch(err => console.error('Error loading GeoJSON:', err));
-        }
 
         fetchDDBB().then(classList => {
           fetchGEOJSON(classList, map);
-          //buildStroke(map);
         });
-        
-        
-
+    
       </script>
   </div>
 
