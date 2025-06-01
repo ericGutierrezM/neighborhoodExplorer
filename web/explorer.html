@@ -89,14 +89,11 @@
   }
 
   #map {
-    flex: 2;
-    height: 650px;
-    width: 50%;
-    margin-left: 1%;
+    flex: 0 0 60%;
+    height: 56em;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    margin-bottom: 2%;
   }
 
   .side-panel {
@@ -134,21 +131,32 @@
     outline: none;
   }
 
-  #kpi.kpi {
+  #content-row {
+  display: flex;
+  gap: 20px; /* space between map and KPI */
+  margin-left: 1%; /* optional, to align with page padding */
+  max-width: 1600px;
+  margin-bottom: 2%;
+}
+
+  #table {
     background-color: #2a2d38;
     padding: 20px;
     border-radius: 10px;
     border-left: 6px solid #4a90e2;
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    flex:0 0 50%;
+    height: 650px;
+    height: 39.5em;
   }
 
-  #kpi h3 {
-    margin-top: 0;
+  #table h3 {
+    margin-top: -0.5em;
     font-size: 1.3rem;
     color: #f1f3f5;
   }
 
-  #kpi p {
+  #table p {
     margin: 8px 0;
     color: #adb5bd;
   }
@@ -160,12 +168,27 @@
     color: #6c757d;
     border-top: 1px solid #2a2d38;
   }
+
+  #dynamicT table {
+    border-collapse: collapse; /* remove gaps between cells */
+    border-spacing: 0;
+    font-size: 16px; 
+  }
+
+  #dynamicT table td,
+  #dynamicT table th {
+    padding: 2px 6px;  /* reduce padding */
+    line-height: 1.2;  /* reduce line height */
+    margin: 0;
+    vertical-align: middle;
+  }
+
 </style>
 </head>
 <body>
   <h1>Neighborhood Explorer - Sant Cugat del Vallès</h1>
   <nav id="bar">
-    <a id='selectedPage' href="explorer.html">Explorer</a>
+    <a id='selectedPage' href="index.html">Explorer</a>
     <a id='df' href="">Compare</a>
     <a id='fd' href="">Correlation</a>
     <a id='navBar' href="downloads.html">Downloads</a>
@@ -174,34 +197,35 @@
   <label id='text-select-topic' for="topic-select">Select a topic</label>
   <select id="topic-select">
     <optgroup label="Demographics">
-      <option value="1">Population (total)</option>
-      <option value="2">Elderly Population (65yrs old and above) (%)</option>
-      <option value="3">Foreign Population (%)</option>
-      <option value="4">Children Population (15yrs old and below) (%)</option>
-      <option value="5">Age (average)</option>
+      <option id="1" value="1">Population (total)</option>
+      <option id="2" value="2">Elderly Population (65yrs old and above) (%)</option>
+      <option id="3" value="3">Foreign Population (%)</option>
+      <option id="4" value="4">Children Population (15yrs old and below) (%)</option>
+      <option id="5" value="5">Age (average)</option>
     </optgroup>
     <optgroup label="Education">
-      <option value="6">Population with Higher Education (15yrs old and above) (%)</option>
+      <option id="6" value="6">Population with Higher Education (15yrs old and above) (%)</option>
     </optgroup>
     <optgroup label="Employment">
-      <option value="7">Employment (16yrs old and above) (%)</option>
+      <option id="7" value="7">Employment (16yrs old and above) (%)</option>
     </optgroup>
     <optgroup label="Households">
-      <option value="8">Households, Owned (%)</option>
-      <option value="9">Households, Rented (%)</option>
-      <option value="10">Households, Size (average)</option>
-      <option value="11">Households, living alone (%)</option>
-      <option value="12">Households, 2 members (%)</option>
-      <option value="13">Households, 3 members (%)</option>
-      <option value="14">Households, 4 members (%)</option>
-      <option value="15">Households, 5 and more members (%)</option>
-      <option value="16">Households, elder (75yrs old and above) living alone (%)</option>
-      <option value="17">Households, all members elders (65yrs old and above) (%)</option>  
+      <option id="8" value="8">Households, Owned (%)</option>
+      <option id="9" value="9">Households, Rented (%)</option>
+      <option id="10" value="10">Households, Size (average)</option>
+      <option id="11" value="11">Households, living alone (%)</option>
+      <option id="12" value="12">Households, 2 members (%)</option>
+      <option id="13" value="13">Households, 3 members (%)</option>
+      <option id="14" value="14">Households, 4 members (%)</option>
+      <option id="15" value="15">Households, 5 and more members (%)</option>
+      <option id="16" value="16">Households, elder (75yrs old and above) living alone (%)</option>
+      <option id="17" value="17">Households, all members elders (65yrs old and above) (%)</option>  
     </optgroup>
 
   
   </select>
 
+<div id="content-row">
   <div id="map">
       <script>
 
@@ -311,7 +335,62 @@
 
           fetchDDBB(topic).then(classList => {
             fetchGEOJSON(classList, map);
+            updateTable(classList[1],classList[0]);
+
           });
+        }
+
+        function updateTable(indicators, values, columns = 3) {
+          const container = document.getElementById("dynamicT");
+          container.innerHTML = '';
+
+          // Prepare data and sort
+          const data = indicators.map((indicator, i) => ({
+            indicator,
+            value: values[i] ?? '-'
+          }));
+
+          data.sort((a, b) => {
+            if (b.value === '-' || isNaN(b.value)) return -1;
+            if (a.value === '-' || isNaN(a.value)) return 1;
+            return b.value - a.value;
+          });
+
+          // Split into N columns
+          const chunkSize = Math.ceil(data.length / columns);
+          for (let c = 0; c < columns; c++) {
+            const chunk = data.slice(c * chunkSize, (c + 1) * chunkSize);
+
+            const table = document.createElement("table");
+            table.style.width = "100%";
+            table.style.borderCollapse = "collapse";
+            table.style.color = "#f1f3f5";
+            table.style.backgroundColor = "#2a2d38";
+
+            const thead = document.createElement("thead");
+            thead.innerHTML = "<tr><th>Indicator</th><th>Value</th></tr>";
+            table.appendChild(thead);
+
+            const tbody = document.createElement("tbody");
+            chunk.forEach(row => {
+              const tr = document.createElement("tr");
+
+              const td1 = document.createElement("td");
+              td1.textContent = row.indicator;
+              td1.style.padding = "6px";
+
+              const td2 = document.createElement("td");
+              td2.textContent = row.value;
+              td2.style.padding = "6px";
+
+              tr.appendChild(td1);
+              tr.appendChild(td2);
+              tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+            container.appendChild(table);
+          }
         }
 
         updateMap(2);
@@ -326,17 +405,26 @@
         topicSelect.addEventListener('change', () => {
           const topic = parseInt(topicSelect.value)+1;
           updateMap(topic);
+          document.getElementById("dataTable").innerHTML=document.getElementById(document.getElementById("topic-select").value).innerHTML
         });
 
           </script>
   </div>
 
-  <div id="kpi" class="kpi">
-    <h3>KPIs for Selected Neighborhood</h3>
-    <p>Population: <span id="population"></span></p>
-    <p>Average Income: <span id="average-income"></span></p>
+  <div id="table">
+    <h3 id="dataTable">Population (total)</h3>
+      <table id="dynamicT" style="display: flex; gap: 20px;">
+        <thead>
+          <tr>
+            <th>Census Tract</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
   </div>
-
+</div>
   <script>
     
 
