@@ -1,3 +1,5 @@
+https://ericgutierrezm.github.io/neighborhoodExplorer/
+
 # Neighborhood Explorer for the city of Sant Cugat del Vallès (Barcelona, Spain)
 
 The aim of this project is to explore different key indicators (income, population, etc) for Sant Cugat's neighborhoods (represented by census tracts), in order to understand more clearly each neighborhood's reality. There are several indicators, and the idea is to keep adding more and updating the existing ones as new data is collected. Additionally, a few _experimental stats_ are also included, which show unconventional measures or indicators that are still under development.
