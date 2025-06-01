@@ -58,118 +58,143 @@
 
   <label id='text-select-topic' for="topic-select">Select a topic</label>
   <select id="topic-select">
-    <option value="topic1">Population (total)</option>
-    <option value="topic2">Elderly Population</option>
-    <option value="topic3">Unemployment</option>
+    <option value="1">Population (total)</option>
+    <option value="2">Elderly Population (%)</option>
+    <option value="3">Unemployment</option>
   </select>
 
   <div id="map">
       <script>
 
-        const map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.7);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
-        
-        var fetchDDBB = function() {
-          var buildClasses = function(rows,columnNumber){
-            var valueList = []
-            var nameList = []
-            for(let i=1;i<rows.length-1;i++){
-              valueList.push(parseInt(rows[i][columnNumber]))
-              nameList.push(rows[i][1])
-            }
+        let map = null;
 
-            let minV = Math.min(...valueList)
-            let maxV = Math.max(...valueList)
-            let classRange = (maxV - minV)/5
-            var classList = []
-            for(let j=0;j<valueList.length;j++){
-              if(valueList[j]<(minV+classRange)){
-                classList.push(['0'+rows[j+1][0],1]);
-              } else if(valueList[j]>=(minV+classRange) && valueList[j]<(minV+2*classRange)){
-                classList.push(['0'+rows[j+1][0],2]);
-              } else if(valueList[j]>=(minV+2*classRange) && valueList[j]<(minV+3*classRange)){
-                classList.push(['0'+rows[j+1][0],3]);
-              } else if(valueList[j]>=(minV+3*classRange) && valueList[j]<(minV+4*classRange)){
-                classList.push(['0'+rows[j+1][0],4]);
-              } else {
-                classList.push(['0'+rows[j+1][0],5]);
+        var updateMap = function (topic){
+          
+          if(map) map.remove();
+          map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.7);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
+        
+          var fetchDDBB = function(columnNumber) {
+            var buildClasses = function(rows,columnNumber){
+              var valueList = []
+              var nameList = []
+              for(let i=1;i<rows.length-1;i++){
+                valueList.push(parseInt(rows[i][columnNumber]))
+                nameList.push(rows[i][1])
               }
-            }
-            return [valueList, nameList, classList];       
-          }
 
-          return fetch('../data/ddbb.csv')
-            .then(response => response.text())
-            .then(csvText => {
-              var rows = csvText.split('\n').map(row => row.split(','));
-              var cList = buildClasses(rows,2);
-              return cList;
-            }); 
-
-        }
-        
-        var fetchGEOJSON = function(classList,map){
-          fetch('../data/shapes.geojson')
-            .then(response => response.json())
-            .then(data => {
-              L.geoJSON(data, {
-                style: function(feature){
-                  return {
-                    fillColor: colorFunction(feature,classList[2]),
-                    color: 'black',
-                    stroke: true,
-                    weight: 1,
-                    fillOpacity: 0.7
-                  };
-                },
-                onEachFeature: function(feature, layer) {
-                  const contentCode = feature.properties.MUNDISSEC;
-                  
-                  let contentValue;
-                  for(let k=0;k<classList[0].length;k++){
-                    if(contentCode==classList[2][k][0]){
-                      contentValue = classList[1][k]+": "+classList[0][k];
-                      break;
-                    }
-                  }
-                  layer.on('click', function(e) {
-                  layer.bindPopup(contentValue).openPopup();
-                  });
+              let minV = Math.min(...valueList)
+              let maxV = Math.max(...valueList)
+              let classRange = (maxV - minV)/5
+              var classList = []
+              for(let j=0;j<valueList.length;j++){
+                if(valueList[j]<(minV+classRange)){
+                  classList.push(['0'+rows[j+1][0],1]);
+                } else if(valueList[j]>=(minV+classRange) && valueList[j]<(minV+2*classRange)){
+                  classList.push(['0'+rows[j+1][0],2]);
+                } else if(valueList[j]>=(minV+2*classRange) && valueList[j]<(minV+3*classRange)){
+                  classList.push(['0'+rows[j+1][0],3]);
+                } else if(valueList[j]>=(minV+3*classRange) && valueList[j]<(minV+4*classRange)){
+                  classList.push(['0'+rows[j+1][0],4]);
+                } else {
+                  classList.push(['0'+rows[j+1][0],5]);
                 }
-              }).addTo(map);
-            })
-            .catch(err => console.error('Error loading GeoJSON:', err));
-        }
-        
-        var colorFunction = function(feature, classList){
-          for(let k=0;k<classList.length;k++){
-            if(feature.properties.MUNDISSEC==classList[k][0]){
-              switch (classList[k][1]){
-                case 1:
-                  return '#8fb3df';
-                  break;
-                case 2:
-                  return '#6086b6';
-                  break;
-                case 3:
-                  return '#3f6490';
-                  break;
-                case 4:
-                  return '#214167';
-                  break;
-                case 5:
-                  return '#0e2542';
               }
+              return [valueList, nameList, classList];       
             }
+
+            return fetch('../data/ddbb.csv')
+              .then(response => response.text())
+              .then(csvText => {
+                var rows = csvText.split('\n').map(row => row.split(';'));
+                var cList = buildClasses(rows,columnNumber);
+                return cList;
+              }); 
+
           }
           
+          var fetchGEOJSON = function(classList,map){
+            fetch('../data/shapes.geojson')
+              .then(response => response.json())
+              .then(data => {
+                L.geoJSON(data, {
+                  style: function(feature){
+                    return {
+                      fillColor: colorFunction(feature,classList[2]),
+                      color: 'black',
+                      stroke: true,
+                      weight: 1,
+                      fillOpacity: 0.7
+                    };
+                  },
+                  onEachFeature: function(feature, layer) {
+                    const contentCode = feature.properties.MUNDISSEC;
+                    
+                    let contentValue;
+                    for(let k=0;k<classList[0].length;k++){
+                      if(contentCode==classList[2][k][0]){
+                        contentValue = classList[1][k]+": "+classList[0][k];
+                        break;
+                      }
+                    }
+                    layer.on('click', function(e) {
+                    layer.bindPopup(contentValue).openPopup();
+                    });
+                  }
+                }).addTo(map);
+              })
+              .catch(err => console.error('Error loading GeoJSON:', err));
+          }
+          
+          var colorFunction = function(feature, classList){
+            for(let k=0;k<classList.length;k++){
+              if(feature.properties.MUNDISSEC==classList[k][0]){
+                switch (classList[k][1]){
+                  case 1:
+                    return '#8fb3df';
+                    break;
+                  case 2:
+                    return '#6086b6';
+                    break;
+                  case 3:
+                    return '#3f6490';
+                    break;
+                  case 4:
+                    return '#214167';
+                    break;
+                  case 5:
+                    return '#0e2542';
+                }
+              }
+            }
+            
+          }
+
+          fetchDDBB(topic).then(classList => {
+            fetchGEOJSON(classList, map);
+          });
         }
 
-        fetchDDBB().then(classList => {
-          fetchGEOJSON(classList, map);
-        });
+        updateMap(2);
     
-      </script>
+        const topicSelect = document.getElementById('topic-select');
+        const mapElement = document.getElementById('map');
+        const populationElement = document.getElementById('population');
+        const incomeElement = document.getElementById('average-income');
+        const navig = document.getElementById('navBar');
+
+        navig.addEventListener('mouseover', () => {
+            navig.style.color = 'lightgreen'
+        })
+        navig.addEventListener('mouseout', () => {
+            navig.style.color='aliceblue'
+        })
+        topicSelect.addEventListener('change', () => {
+          const topic = parseInt(topicSelect.value)+1;
+          updateMap(topic);
+        });
+
+          </script>
   </div>
 
   <div id="kpi" class="kpi">
@@ -179,44 +204,8 @@
   </div>
 
   <script>
-    const topicSelect = document.getElementById('topic-select');
-    const mapElement = document.getElementById('map');
-    const populationElement = document.getElementById('population');
-    const incomeElement = document.getElementById('average-income');
-    const navig = document.getElementById('navBar')
+    
 
-    navig.addEventListener('mouseover', () => {
-        navig.style.color = 'lightgreen'
-    })
-    navig.addEventListener('mouseout', () => {
-        navig.style.color='aliceblue'
-    })
-    topicSelect.addEventListener('change', () => {
-      const topic = topicSelect.value;
-      updateMap(topic);
-      updateKPIs(topic);
-    });
-
-    function updateMap(topic) {
-      mapElement.innerHTML = `<img src="maps/${topic}.png" alt="${topic} Map" style="width:100%; height:100%;">`;
-    }
-
-    function updateKPIs(topic) {
-      if (topic === 'neighborhood1') {
-        populationElement.textContent = '100,000';
-        incomeElement.textContent = '$50,000';
-      } else if (neighborhood === 'neighborhood2') {
-        populationElement.textContent = '80,000';
-        incomeElement.textContent = '$55,000';
-      } else if (neighborhood === 'neighborhood3') {
-        populationElement.textContent = '120,000';
-        incomeElement.textContent = '$45,000';
-      }
-    }
-
-    // Initialize with default
-    updateMap(neighborhoodSelect.value);
-    updateKPIs(neighborhoodSelect.value);
   </script>
 </body>
 <footer>
