@@ -170,15 +170,15 @@
   }
 
   #dynamicT table {
-    border-collapse: collapse; /* remove gaps between cells */
+    border-collapse: collapse;
     border-spacing: 0;
     font-size: 16px; 
   }
 
   #dynamicT table td,
   #dynamicT table th {
-    padding: 2px 6px;  /* reduce padding */
-    line-height: 1.2;  /* reduce line height */
+    padding: 2px 6px;
+    line-height: 1.2;
     margin: 0;
     vertical-align: middle;
   }
@@ -221,8 +221,6 @@
       <option id="16" value="16">Households, elder (75yrs old and above) living alone (%)</option>
       <option id="17" value="17">Households, all members elders (65yrs old and above) (%)</option>  
     </optgroup>
-
-  
   </select>
 
 <div id="content-row">
@@ -343,8 +341,6 @@
         function updateTable(indicators, values, columns = 3) {
           const container = document.getElementById("dynamicT");
           container.innerHTML = '';
-
-          // Prepare data and sort
           const data = indicators.map((indicator, i) => ({
             indicator,
             value: values[i] ?? '-'
@@ -355,8 +351,6 @@
             if (a.value === '-' || isNaN(a.value)) return 1;
             return b.value - a.value;
           });
-
-          // Split into N columns
           const chunkSize = Math.ceil(data.length / columns);
           for (let c = 0; c < columns; c++) {
             const chunk = data.slice(c * chunkSize, (c + 1) * chunkSize);
@@ -396,10 +390,6 @@
         updateMap(2);
     
         const topicSelect = document.getElementById('topic-select');
-        const mapElement = document.getElementById('map');
-        const populationElement = document.getElementById('population');
-        const incomeElement = document.getElementById('average-income');
-        const navig = document.getElementById('navBar');
 
         
         topicSelect.addEventListener('change', () => {
@@ -408,7 +398,7 @@
           document.getElementById("dataTable").innerHTML=document.getElementById(document.getElementById("topic-select").value).innerHTML
         });
 
-          </script>
+      </script>
   </div>
 
   <div id="table">
@@ -425,10 +415,6 @@
       </table>
   </div>
 </div>
-  <script>
-    
-
-  </script>
 </body>
 <footer>
     <p>Author: Eric Gutiérrez</p>
