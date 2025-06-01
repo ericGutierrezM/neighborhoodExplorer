@@ -11,56 +11,195 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>   
- <style>
-    body {
-      font-family: Verdana, sans-serif;
-      color: aliceblue;
-      background-color: #7faf89;
-      margin: 20px;
-    }
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1c1e26;
+    color: #f1f3f5;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
 
-    .kpi {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background-color: #423e2f;
-    }
-    nav {
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-    a {
-      text-decoration: none;
-      color: aliceblue;
-    }
-    #bar {
-        background-color: #423e2f;
-    }
-    #text-select-topic {
-        font-size: 18px;
-    }
-    #map {
-        width: 50%;
-        height:700px;
-        margin-top:20px;
-    }
-    #selectedPage {
-      color: #90EE90;
-    }
-  </style>
+  header {
+    padding: 20px;
+    background-color: #1c1e26;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-left: 1%;
+    margin: 0;
+    padding: 10px 20px;
+  }
+
+  nav#bar {
+    background-color: #2a2d38;
+    padding: 0 5px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+    align-items: center;
+    height: 60px;
+    border-bottom: 0px solid #444857;
+    margin-bottom: 1%;
+  }
+
+  nav a {
+    color: #f1f3f5;
+    text-decoration: none;
+    position: relative;
+    font-size: 1rem;
+    padding: 10px 0;
+    transition: color 0.3s ease;
+    margin-left: 1%;
+  }
+
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 6px;
+    width: 100%;
+    height: 2px;
+    background-color: #4a90e2;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: right;
+  }
+
+  nav a:hover::after,
+  nav #selectedPage::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  nav #selectedPage {
+    font-weight: bold;
+    color: #8ab4f8;
+  }
+
+  main {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  #map {
+    flex: 2;
+    height: 650px;
+    width: 50%;
+    margin-left: 1%;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    margin-bottom: 2%;
+  }
+
+  .side-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  label#text-select-topic {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5%;
+    margin-left: 1%;
+
+  }
+
+  select#topic-select {
+    background-color: #2a2d38;
+    color: #f1f3f5;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #444857;
+    width: 25%;
+    transition: border 0.3s, box-shadow 0.3s;
+    margin-left: 1%;
+    margin-bottom: 0.5%;
+  }
+
+  select#topic-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
+    outline: none;
+  }
+
+  #kpi.kpi {
+    background-color: #2a2d38;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 6px solid #4a90e2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  #kpi h3 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    color: #f1f3f5;
+  }
+
+  #kpi p {
+    margin: 8px 0;
+    color: #adb5bd;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    border-top: 1px solid #2a2d38;
+  }
+</style>
 </head>
 <body>
   <h1>Neighborhood Explorer - Sant Cugat del Vallès</h1>
   <nav id="bar">
-    <a id='selectedPage' href="index.html">Explorer</a>
+    <a id='selectedPage' href="explorer.html">Explorer</a>
+    <a id='df' href="">Compare</a>
+    <a id='fd' href="">Correlation</a>
     <a id='navBar' href="downloads.html">Downloads</a>
   </nav>
 
   <label id='text-select-topic' for="topic-select">Select a topic</label>
   <select id="topic-select">
-    <option value="1">Population (total)</option>
-    <option value="2">Elderly Population (%)</option>
-    <option value="3">Unemployment</option>
+    <optgroup label="Demographics">
+      <option value="1">Population (total)</option>
+      <option value="2">Elderly Population (65yrs old and above) (%)</option>
+      <option value="3">Foreign Population (%)</option>
+      <option value="4">Children Population (15yrs old and below) (%)</option>
+      <option value="5">Age (average)</option>
+    </optgroup>
+    <optgroup label="Education">
+      <option value="6">Population with Higher Education (15yrs old and above) (%)</option>
+    </optgroup>
+    <optgroup label="Employment">
+      <option value="7">Employment (16yrs old and above) (%)</option>
+    </optgroup>
+    <optgroup label="Households">
+      <option value="8">Households, Owned (%)</option>
+      <option value="9">Households, Rented (%)</option>
+      <option value="10">Households, Size (average)</option>
+      <option value="11">Households, living alone (%)</option>
+      <option value="12">Households, 2 members (%)</option>
+      <option value="13">Households, 3 members (%)</option>
+      <option value="14">Households, 4 members (%)</option>
+      <option value="15">Households, 5 and more members (%)</option>
+      <option value="16">Households, elder (75yrs old and above) living alone (%)</option>
+      <option value="17">Households, all members elders (65yrs old and above) (%)</option>  
+    </optgroup>
+
+  
   </select>
 
   <div id="map">
@@ -71,7 +210,7 @@
         var updateMap = function (topic){
           
           if(map) map.remove();
-          map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.7);
+          map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.6);
           L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
         
           var fetchDDBB = function(columnNumber) {
@@ -79,13 +218,13 @@
               var valueList = []
               var nameList = []
               for(let i=1;i<rows.length-1;i++){
-                valueList.push(parseInt(rows[i][columnNumber]))
+                valueList.push(parseFloat(rows[i][columnNumber]))
                 nameList.push(rows[i][1])
               }
 
-              let minV = Math.min(...valueList)
-              let maxV = Math.max(...valueList)
-              let classRange = (maxV - minV)/5
+              let minV = parseFloat(Math.min(...valueList))
+              let maxV = parseFloat(Math.max(...valueList))
+              let classRange = parseFloat((maxV - minV)/5)
               var classList = []
               for(let j=0;j<valueList.length;j++){
                 if(valueList[j]<(minV+classRange)){
@@ -106,7 +245,7 @@
             return fetch('../data/ddbb.csv')
               .then(response => response.text())
               .then(csvText => {
-                var rows = csvText.split('\n').map(row => row.split(';'));
+                var rows = csvText.split('\n').map(row => row.split(','));
                 var cList = buildClasses(rows,columnNumber);
                 return cList;
               }); 
@@ -133,7 +272,7 @@
                     let contentValue;
                     for(let k=0;k<classList[0].length;k++){
                       if(contentCode==classList[2][k][0]){
-                        contentValue = classList[1][k]+": "+classList[0][k];
+                        contentValue = classList[1][k]+": "+parseFloat(classList[0][k]);
                         break;
                       }
                     }
@@ -183,12 +322,7 @@
         const incomeElement = document.getElementById('average-income');
         const navig = document.getElementById('navBar');
 
-        navig.addEventListener('mouseover', () => {
-            navig.style.color = 'lightgreen'
-        })
-        navig.addEventListener('mouseout', () => {
-            navig.style.color='aliceblue'
-        })
+        
         topicSelect.addEventListener('change', () => {
           const topic = parseInt(topicSelect.value)+1;
           updateMap(topic);
