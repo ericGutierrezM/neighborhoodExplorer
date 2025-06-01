@@ -4,32 +4,125 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Neighborhood Explorer | Downloads</title>
+  <title>Neighborhood Explorer</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>   
- <style>
-    body {
-      font-family: Verdana, sans-serif;
-      color: aliceblue;
-      background-color: #7faf89;
-      margin: 20px;
-    }
-    .kpi {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background-color: #423e2f;
-    }
-    nav {
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-    a {
-      text-decoration: none;
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1c1e26;
+    color: #f1f3f5;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  header {
+    padding: 20px;
+    background-color: #1c1e26;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-left: 1%;
+    margin: 0;
+    padding: 10px 20px;
+  }
+
+  nav#bar {
+    background-color: #2a2d38;
+    padding: 0 5px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+    align-items: center;
+    height: 60px;
+    border-bottom: 0px solid #444857;
+    margin-bottom: 1%;
+  }
+
+  nav a {
+    color: #f1f3f5;
+    text-decoration: none;
+    position: relative;
+    font-size: 1rem;
+    padding: 10px 0;
+    transition: color 0.3s ease;
+    margin-left: 1%;
+  }
+
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 6px;
+    width: 100%;
+    height: 2px;
+    background-color: #4a90e2;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: right;
+  }
+
+  nav a:hover::after,
+  nav #down::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  nav #down {
+    font-weight: bold;
+    color: #8ab4f8;
+  }
+
+  main {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  #underC {
+    display: block;
+    font-size: 5em;
+    font-weight: 600;
+    margin-bottom: 0.5%;
+    margin-left: 1%;
+
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    border-top: 1px solid #2a2d38;
+  }
+
+</style>
+</head>
+<body>
+  <h1>Neighborhood Explorer - Sant Cugat del Vallès</h1>
+  <nav id="bar">
+    <a id='expl' href="explorer.html">Explorer</a>
+    <a id='comp' href="compare.html">Compare</a>
+    <a id='corr' href="correlation.html">Correlation</a>
+    <a id='down' href="downloads.html">Downloads</a>
+  </nav>
+
+  <div>
+    <p id="underC">🚧Page under construction👷‍♂</p>
+  </div>
+
+
+</body>
+</html>
       color: aliceblue;
     }
     #bar {
