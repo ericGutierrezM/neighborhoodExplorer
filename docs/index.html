@@ -264,7 +264,7 @@
               return [valueList, nameList, classList];       
             }
 
-            return fetch('../data/ddbb.csv')
+            return fetch('./data/ddbb.csv')
               .then(response => response.text())
               .then(csvText => {
                 var rows = csvText.split('\n').map(row => row.split(','));
@@ -275,7 +275,7 @@
           }
           
           var fetchGEOJSON = function(classList,map){
-            fetch('../data/shapes.geojson')
+            fetch('./data/shapes.geojson')
               .then(response => response.json())
               .then(data => {
                 L.geoJSON(data, {
