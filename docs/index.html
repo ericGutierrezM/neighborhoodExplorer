@@ -12,183 +12,207 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>   
 <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1c1e26;
-    color: #f1f3f5;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
-  }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1c1e26;
+  color: #f1f3f5;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-  header {
-    padding: 20px;
-    background-color: #1c1e26;
-  }
+header {
+  padding: 20px;
+  background-color: #1c1e26;
+}
 
+h1 {
+  font-size: 2rem;
+  margin: 0;
+  padding: 10px 20px;
+}
+
+nav#bar {
+  background-color: #2a2d38;
+  padding: 0 5px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 60px;
+  margin-bottom: 1%;
+}
+
+nav a {
+  color: #f1f3f5;
+  text-decoration: none;
+  position: relative;
+  font-size: 1rem;
+  padding: 10px 0;
+  margin-left: 1%;
+  transition: color 0.3s ease;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  width: 100%;
+  height: 2px;
+  background-color: #4a90e2;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  transform-origin: right;
+}
+
+nav a:hover::after,
+nav #selectedPage::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+nav #selectedPage {
+  font-weight: bold;
+  color: #8ab4f8;
+}
+
+main {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#content-row {
+  display: flex;
+  gap: 20px;
+  margin-left: 1%;
+  margin-bottom: 2%;
+  width: 98%;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+#map {
+  flex: 1 1 50%;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  height: auto;
+}
+
+#table {
+  flex: 1 1 50%;
+  background-color: #2a2d38;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 6px solid #4a90e2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  box-sizing: border-box;
+}
+
+#table h3 {
+  margin-top: -0.5em;
+  font-size: 1.3rem;
+  color: #f1f3f5;
+}
+
+#table p {
+  margin: 8px 0;
+  color: #adb5bd;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+label#text-select-topic {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-left: 1%;
+  margin-bottom: 0.5%;
+}
+
+select#topic-select {
+  background-color: #2a2d38;
+  color: #f1f3f5;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #444857;
+  width: 30%;
+  min-width: 200px;
+  max-width: 600px;
+  margin-left: 1%;
+  margin-bottom: 0.5%;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+select#topic-select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
+  outline: none;
+}
+
+#dynamicT table {
+  border-collapse: collapse;
+  font-size: 1em;
+  width: 100%;
+  overflow-x: auto;
+}
+
+#dynamicT table td,
+#dynamicT table th {
+  padding: 2px 6px;
+  line-height: 1.2;
+  margin: 0;
+  vertical-align: middle;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #6c757d;
+  border-top: 1px solid #2a2d38;
+}
+
+@media (max-width: 768px) {
   h1 {
-    font-size: 2rem;
-    margin-left: 1%;
-    margin: 0;
-    padding: 10px 20px;
+    font-size: 1.5rem;
+    padding: 10px;
   }
 
   nav#bar {
-    background-color: #2a2d38;
-    padding: 0 5px;
-    display: flex;
-    justify-content: flex-start;
-    gap: 5px;
-    align-items: center;
-    height: 60px;
-    border-bottom: 0px solid #444857;
-    margin-bottom: 1%;
-  }
-
-  nav a {
-    color: #f1f3f5;
-    text-decoration: none;
-    position: relative;
-    font-size: 1rem;
-    padding: 10px 0;
-    transition: color 0.3s ease;
-    margin-left: 1%;
-  }
-
-  nav a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 6px;
-    width: 100%;
-    height: 2px;
-    background-color: #4a90e2;
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-    transform-origin: right;
-  }
-
-  nav a:hover::after,
-  nav #selectedPage::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-
-  nav #selectedPage {
-    font-weight: bold;
-    color: #8ab4f8;
-  }
-
-  main {
-    width: 100%;
-    max-width: 100%; /* or remove max-width */
-    padding: 20px;
-    display: flex;
-    gap: 30px;
-    flex-direction: row;
-  }
-
-  #map {
-    flex: 0 0 60%;
-    height: 56em;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  }
-
-  .side-panel {
-    flex: 1;
-    display: flex;
     flex-direction: column;
-    gap: 30px;
-  }
-
-  label#text-select-topic {
-    display: block;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5%;
-    margin-left: 1%;
-
+    align-items: flex-start;
   }
 
   select#topic-select {
-    background-color: #2a2d38;
-    color: #f1f3f5;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #444857;
-    width: 25%;
-    transition: border 0.3s, box-shadow 0.3s;
-    margin-left: 1%;
-    margin-bottom: 0.5%;
+    width: 90%;
   }
 
-  select#topic-select:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
-    outline: none;
+  #map, #table {
+    height: 45vh;
   }
 
   #content-row {
-  display: flex;
-  gap: 20px; /* space between map and KPI */
-  margin-left: 1%; /* optional, to align with page padding */
-  max-width: 1600px;
-  margin-bottom: 2%;
+    gap: 10px;
+  }
 }
-
-  #table {
-    background-color: #2a2d38;
-    padding: 20px;
-    border-radius: 10px;
-    border-left: 6px solid #4a90e2;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    flex:0 0 50%;
-    height: 650px;
-    height: 39.5em;
-  }
-
-  #table h3 {
-    margin-top: -0.5em;
-    font-size: 1.3rem;
-    color: #f1f3f5;
-  }
-
-  #table p {
-    margin: 8px 0;
-    color: #adb5bd;
-  }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 0.9rem;
-    color: #6c757d;
-    border-top: 1px solid #2a2d38;
-  }
-
-  #dynamicT table {
-    border-collapse: collapse;
-    border-spacing: 0;
-    font-size: 1em; 
-  }
-
-  #dynamicT table td,
-  #dynamicT table th {
-    padding: 2px 6px;
-    line-height: 1.2;
-    margin: 0;
-    vertical-align: middle;
-  }
 
 </style>
 </head>
 <body>
   <h1>Neighborhood Explorer - Sant Cugat del Vallès</h1>
   <nav id="bar">
-    <a id='selectedPage' href="index.html">Explorer</a>
+    <a id='selectedPage' href="explorer.html">Explorer</a>
     <a id='df' href="compare.html">Compare</a>
     <a id='fd' href="correlation.html">Correlation</a>
     <a id='navBar' href="downloads.html">Downloads</a>
@@ -235,6 +259,12 @@
           map = L.map('map',{zoomSnap: 0.1}).setView([41.467, 2.075], 12.6);
           L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
         
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              map.invalidateSize();
+            }, 100); // Adjust delay if needed
+          });
+
           var fetchDDBB = function(columnNumber) {
             var buildClasses = function(rows,columnNumber){
               var valueList = []
@@ -264,7 +294,7 @@
               return [valueList, nameList, classList];       
             }
 
-            return fetch('./data/ddbb.csv')
+            return fetch('../data/ddbb.csv')
               .then(response => response.text())
               .then(csvText => {
                 var rows = csvText.split('\n').map(row => row.split(','));
@@ -275,7 +305,7 @@
           }
           
           var fetchGEOJSON = function(classList,map){
-            fetch('./data/shapes.geojson')
+            fetch('../data/shapes.geojson')
               .then(response => response.json())
               .then(data => {
                 L.geoJSON(data, {
