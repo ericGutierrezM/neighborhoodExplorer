@@ -305,7 +305,7 @@ footer {
           }
           
           var fetchGEOJSON = function(classList,map){
-            fetch('../data/shapes.geojson')
+            fetch('/data/shapes.geojson')
               .then(response => response.json())
               .then(data => {
                 L.geoJSON(data, {
