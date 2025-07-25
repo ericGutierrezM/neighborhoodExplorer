@@ -1,0 +1,7 @@
+https://ericgutierrezm.github.io/neighborhoodExplorer/
+
+# Neighborhood Explorer for the city of Sant Cugat del Vallès (Barcelona, Spain)
+
+The aim of this project is to explore different key indicators (income, population, etc) for Sant Cugat's neighborhoods (represented by census tracts), in order to understand more clearly each neighborhood's reality. There are several indicators, and the idea is to keep adding more and updating the existing ones as new data is collected. Additionally, a few _experimental stats_ are also included, which show unconventional measures or indicators that are still under development. On the _compare_ page, it will be possible to compare up to 4 indicators; on the _correlation_ page, we will include a few correlation metrics between each pair of variables; and on the _downloads_ page it will be possible to download the project's dataset (including the statistical data, the _experimental stats_, the _geoJSON_ files for the census tracts, and the correlation values).
+
+The inspiration for this project comes from Seth D. Kaplan's excellent book [Fragile Neighborhoods](https://sethkaplan.org/fragile-neighborhoods/), and from the need to understand the diverse challenges neighborhoods face worldwide (in Sant Cugat, in this case). In addition, the whole idea of developing some kind of portal to show data at the neighborhood level comes from the [Durham Neighborhood Compass](https://compass.durhamnc.gov/en/).
