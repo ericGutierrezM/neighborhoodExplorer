@@ -306,7 +306,7 @@ footer {
               return [valueList, nameList, classList];       
             }
 
-            return fetch('./data/ddbb.csv')
+            return fetch('data\ddbb.csv')
               .then(response => response.text())
               .then(csvText => {
                 var rows = csvText.split('\n').map(row => row.split(','));
